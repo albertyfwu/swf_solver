@@ -7,7 +7,9 @@ class Board:
     self.trie = trie
     self.letter_points = letter_points
     self.letters = self._adjustLetters(letters)
-    self.bonuses = bonuses
+    self.letter_bonuses = None
+    self.word_bonuses = None
+    self._construct_bonuses(bonuses)
     self.results = None
 
   def _adjustLetters(self, letters):
@@ -17,6 +19,35 @@ class Board:
         if letters[i][j] == 'Q':
           letters[i][j] = 'QU'
     return letters
+
+  def _construct_bonuses(self, bonuses):
+    """Given an array of arrays of values '2L', '2W', '3L', '3W',
+    update letter_bonuses and word_bonuses."""
+    self.letter_bonuses = []
+    self.word_bonuses = []
+
+    for i in xrange(4):
+      letter_bonus_row = []
+      word_bonus_row = []
+
+      for j in xrange(4):
+        word_bonus = 1
+        letter_bonus = 1
+        bonus_tile = bonuses[i][j]
+        if bonus_tile == '2L':
+          letter_bonus = 2
+        elif bonus_tile == '3L':
+          letter_bonus = 3
+        elif bonus_tile == '2W':
+          word_bonus = 2
+        elif bonus_tile == '3W':
+          word_bonus = 3
+
+        letter_bonus_row.append(letter_bonus)
+        word_bonus_row.append(word_bonus)
+
+      self.letter_bonuses.append(letter_bonus_row)
+      self.word_bonuses.append(word_bonus_row)
 
   def solve(self):
     """Starting at each of the 16 tiles on the board, execute a DFS,
@@ -31,48 +62,42 @@ class Board:
         print 'Solving...%d/16 completed' % (4*i+j+1)
         self._solveOneTile(i, j, resultsDict)
 
-    self.results = resultsDict.items() # store results as a list of tuples
+    # store results as a list of tuples
+    self.results = sorted(resultsDict.items(), key=lambda (word, score) : score, reverse=True)
 
   def _solveOneTile(self, i, j, resultsDict):
     """Starting at the given tile, execute a DFS to find words. The elements
     in the DFS stack are tuples of the following form:
-    (i, j, word/prefix, current word/prefix score, tile chain)"""
+    (i, j, word/prefix, current word/prefix score, tile chain, word bonus)"""
     letter = self.letters[i][j]
-    stack = [(i, j, letter, self.letter_points[letter], [(i, j)])] # initialize with the first tile
+    stack = [(i, j, letter, self.letter_points[letter], [(i, j)], 1)] # initialize with the first tile
 
     while len(stack) != 0:
-      curr_i, curr_j, curr_s, curr_p, curr_c = stack.pop() # current i, j, prefix, points, chain
+      # current i, j, prefix, points, chain, word bonus
+      curr_i, curr_j, curr_s, curr_p, curr_c, curr_w = stack.pop()
 
       if self.trie.containsWord(curr_s):
-        self._updateResultsDict(resultsDict, curr_s, curr_p)
+        self._updateResultsDict(resultsDict, curr_s, curr_p * curr_w)
 
       for ii in range(curr_i - 1, curr_i + 2):
         for jj in range(curr_j - 1, curr_j + 2):
           if (ii, jj) != (curr_i, curr_j) and ii >= 0 and ii < 4 and jj >= 0 and jj < 4 \
           and (ii, jj) not in curr_c:
             new_letter = self.letters[ii][jj]
-            new_s = curr_s + new_letter
 
-            points_delta = self.letter_points[new_letter]
-            bonus_tile = self.bonuses[ii][jj]
-            if bonus_tile == '2L':
-              points_delta *= 2
-            elif bonus_tile == '3L':
-              points_delta *= 3
-            new_p = curr_p + points_delta
+            new_s = curr_s + new_letter
+            new_p = curr_p + self.letter_points[new_letter] * self.letter_bonuses[ii][jj]
+            new_c = curr_c + [(ii, jj)]
+            new_w = curr_w * self.word_bonuses[ii][jj]
 
             if self.trie.containsPrefix(new_s):
-              stack.append((ii, jj, new_s, new_p, curr_c + [(ii, jj)]))
+              stack.append((ii, jj, new_s, new_p, new_c, new_w))
 
   def _updateResultsDict(self, resultsDict, word, points):
     if word not in resultsDict:
       resultsDict[word] = points
     elif points > resultsDict[word]:
       resultsDict[word] = points
-
-  def sortResults(self):
-    """self.results are in form [(word1, score1), (word2, score2), ...]"""
-    self.results.sort(key=lambda (word, score) : score, reverse=True)
 
   def getResults(self):
     return self.results

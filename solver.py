@@ -35,13 +35,12 @@ if __name__ == '__main__':
              ['T', 'A', 'O', 'N'],
              ['G', 'N', 'I', 'T']]
 
-  bonuses = [['', '', '', ''],
+  bonuses = [['3W', '', '', ''],
              ['', '2L', '', ''],
              ['', '', '', ''],
              ['', '', '', '']]
 
   board = Board(trie, letter_points, letters, bonuses)
   board.solve()
-  board.sortResults()
   results = board.getResults()
   print results, "%d words" % len(results)
