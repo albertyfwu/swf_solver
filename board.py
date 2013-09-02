@@ -16,8 +16,9 @@ class Board:
     """Starting at each of the 16 tiles on the board, execute a DFS,
     checking for existence of the prefix in `self.trie`. If the word can be
     found, add it to an ongoing set of found words along with its score."""
-    print '\nSolving...',
+    print '\nSolving',
     resultsDict = {}
+    progress = 0 # for progress bar
    
     # initialize stack
     stack = []
@@ -27,6 +28,10 @@ class Board:
         stack.append((i, j, letter, self.letter_points[letter], [(i, j)], 1))
 
     while len(stack) != 0:
+      if len(stack) == 16 - progress: # for progress bar
+        print '.',
+        progress += 1
+
       # current i, j, prefix, points, chain, word bonus
       curr_i, curr_j, curr_s, curr_p, curr_c, curr_w = stack.pop()
 
