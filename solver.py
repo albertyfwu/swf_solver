@@ -1,6 +1,15 @@
 from board import *
 from trie import *
 
+"""
+This is a solver for Scramble with Friends (SWF) by Zynga. The rules:
+1. Each tile contains a letter with a given number of letter points.
+2. Tiles marked as 2L or 3L get twice or thrice the letter points.
+3. Tiles marked as 2W or 3W contribute twice or thrice to the total word score.
+4. Words of longer lengths get more points according to word_length_points.txt.
+5. Words that are only 2 letters long get a default score of 1.
+"""
+
 def loadWords(filepath):
   trie = Trie(isRoot=True, cacheOn=True)
   trie.importWords(filepath)

@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 class Board:
   def __init__(self, trie, letter_points, word_length_points, letters, bonuses):
     """Initializes a SWF board instance containing a trie of dictionary words,
@@ -29,7 +31,8 @@ class Board:
     for i in xrange(self.rows):
       for j in xrange(self.cols):
         letter = self.letters[i][j]
-        stack.append((i, j, letter, self.letter_points[letter], [(i, j)], 1))
+        stack.append((i, j, letter, self.letter_points[letter] * self.letter_bonuses[i][j],
+          [(i, j)], self.word_bonuses[i][j]))
 
     while len(stack) != 0:
       if len(stack) == self.num_tiles - progress: # for progress bar
@@ -40,7 +43,10 @@ class Board:
       curr_i, curr_j, curr_s, curr_p, curr_c, curr_w = stack.pop()
 
       if self.trie.containsWord(curr_s):
-        total_points = curr_p * curr_w + self.word_length_points[len(curr_s)]
+        if len(curr_s) > 2:
+          total_points = curr_p * curr_w + self.word_length_points[len(curr_s)]
+        else:
+          total_points = 1
         self._updateResultsDict(resultsDict, curr_s, total_points)
 
       for ii in range(curr_i - 1, curr_i + 2):
@@ -59,7 +65,7 @@ class Board:
               stack.append((ii, jj, new_s, new_p, new_c, new_w))
 
     # store results as a list of tuples
-    self.results = sorted(resultsDict.items(), key=lambda (word, score) : score, reverse=True)
+    self.results = sorted(resultsDict.items(), key=lambda (word, score) : (-score, word))
     print 'Done!'
 
   def getResults(self):
