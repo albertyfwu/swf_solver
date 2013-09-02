@@ -12,6 +12,53 @@ class Board:
     self._construct_bonuses(bonuses)
     self.results = None
 
+  def solve(self):
+    """Starting at each of the 16 tiles on the board, execute a DFS,
+    checking for existence of the prefix in `self.trie`. If the word can be
+    found, add it to an ongoing set of found words along with its score."""
+    print 'Solving...'
+    resultsDict = {}
+   
+    # initialize stack
+    stack = []
+    for i in xrange(4):
+      for j in xrange(4):
+        letter = self.letters[i][j]
+        stack.append((i, j, letter, self.letter_points[letter], [(i, j)], 1))
+
+    while len(stack) != 0:
+      # current i, j, prefix, points, chain, word bonus
+      curr_i, curr_j, curr_s, curr_p, curr_c, curr_w = stack.pop()
+
+      if self.trie.containsWord(curr_s):
+        self._updateResultsDict(resultsDict, curr_s, curr_p * curr_w)
+
+      for ii in range(curr_i - 1, curr_i + 2):
+        for jj in range(curr_j - 1, curr_j + 2):
+          if (ii, jj) != (curr_i, curr_j) and ii >= 0 and ii < 4 and jj >= 0 and jj < 4 \
+          and (ii, jj) not in curr_c:
+            new_letter = self.letters[ii][jj]
+
+            new_s = curr_s + new_letter
+            new_p = curr_p + self.letter_points[new_letter] * self.letter_bonuses[ii][jj]
+            new_c = curr_c + [(ii, jj)]
+            new_w = curr_w * self.word_bonuses[ii][jj]
+
+            if self.trie.containsPrefix(new_s):
+              stack.append((ii, jj, new_s, new_p, new_c, new_w))
+
+    # store results as a list of tuples
+    self.results = sorted(resultsDict.items(), key=lambda (word, score) : score, reverse=True)
+
+  def getResults(self):
+    return self.results
+
+  def _updateResultsDict(self, resultsDict, word, points):
+    if word not in resultsDict:
+      resultsDict[word] = points
+    elif points > resultsDict[word]:
+      resultsDict[word] = points
+
   def _adjustLetters(self, letters):
     """Make sure Q tiles are actually represented as QU tiles."""
     for i in xrange(len(letters)):
@@ -48,56 +95,3 @@ class Board:
 
       self.letter_bonuses.append(letter_bonus_row)
       self.word_bonuses.append(word_bonus_row)
-
-  def solve(self):
-    """Starting at each of the 16 tiles on the board, execute a DFS,
-    checking for existence of the prefix in `self.trie`. If the word can be
-    found, add it to an ongoing set of found words along with its score."""
-    print 'Solving...'
-    resultsDict = {}
-    
-    # execute BFS and other algorithms
-    for i in xrange(4):
-      for j in xrange(4):
-        print 'Solving...%d/16 completed' % (4*i+j+1)
-        self._solveOneTile(i, j, resultsDict)
-
-    # store results as a list of tuples
-    self.results = sorted(resultsDict.items(), key=lambda (word, score) : score, reverse=True)
-
-  def _solveOneTile(self, i, j, resultsDict):
-    """Starting at the given tile, execute a DFS to find words. The elements
-    in the DFS stack are tuples of the following form:
-    (i, j, word/prefix, current word/prefix score, tile chain, word bonus)"""
-    letter = self.letters[i][j]
-    stack = [(i, j, letter, self.letter_points[letter], [(i, j)], 1)] # initialize with the first tile
-
-    while len(stack) != 0:
-      # current i, j, prefix, points, chain, word bonus
-      curr_i, curr_j, curr_s, curr_p, curr_c, curr_w = stack.pop()
-
-      if self.trie.containsWord(curr_s):
-        self._updateResultsDict(resultsDict, curr_s, curr_p * curr_w)
-
-      for ii in range(curr_i - 1, curr_i + 2):
-        for jj in range(curr_j - 1, curr_j + 2):
-          if (ii, jj) != (curr_i, curr_j) and ii >= 0 and ii < 4 and jj >= 0 and jj < 4 \
-          and (ii, jj) not in curr_c:
-            new_letter = self.letters[ii][jj]
-
-            new_s = curr_s + new_letter
-            new_p = curr_p + self.letter_points[new_letter] * self.letter_bonuses[ii][jj]
-            new_c = curr_c + [(ii, jj)]
-            new_w = curr_w * self.word_bonuses[ii][jj]
-
-            if self.trie.containsPrefix(new_s):
-              stack.append((ii, jj, new_s, new_p, new_c, new_w))
-
-  def _updateResultsDict(self, resultsDict, word, points):
-    if word not in resultsDict:
-      resultsDict[word] = points
-    elif points > resultsDict[word]:
-      resultsDict[word] = points
-
-  def getResults(self):
-    return self.results
