@@ -27,7 +27,7 @@ class Board:
         stack.append((i, j, letter, self.letter_points[letter], [(i, j)], 1))
 
     while len(stack) != 0:
-      # current i, j, prefix, points, chain, word bonus
+      # current i, j, prefix, points, chain, word bonusf
       curr_i, curr_j, curr_s, curr_p, curr_c, curr_w = stack.pop()
 
       if self.trie.containsWord(curr_s):

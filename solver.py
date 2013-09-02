@@ -25,10 +25,17 @@ if __name__ == '__main__':
   print 'Letter points loaded!\n'
 
   # prompt user for letters on board
-  # raw = raw_input("Please enter the SWF board as follows: " \
-  #   + "xxxx xxxx xxxx xxxx\n")
-  # lines = raw.strip(' ').split(' ')
-  # letters = [[letter.upper() for letter in line] for line in lines]
+  raw = raw_input("Please enter the SWF board as follows: " \
+    + "xxxx;xxxx;xxxx;xxxx\n")
+  lines = raw.strip(' ').split(';')
+  letters = [[letter.upper() for letter in line] for line in lines]
+
+  # prompt user for bonuses on board
+  raw = raw_input("Please enter word/letter bonuses as follows: " \
+    + "x,x,x,x;x,x,x,x;x,x,x,x;x,x,x,x. Accepted values for x are: " \
+    + "'2L', '3L', '2W', '3W', ''.")
+  lines = raw.strip(' ').split(';')
+  bonuses = [[bonus for bonus in line.split(',')] for line in lines]
 
   letters = [['C', 'O', 'Q', 'Z'],
              ['N', 'S', 'I', 'D'],
