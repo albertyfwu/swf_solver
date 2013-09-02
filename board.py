@@ -67,8 +67,3 @@ class Board:
 
   def getResults(self):
     return self.results
-
-  def dispResults(self):
-    # for result in self.results:
-    #   print result
-    print self.results

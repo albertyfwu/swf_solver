@@ -38,4 +38,4 @@ if __name__ == '__main__':
   board = Board(trie, letter_points, letters)
   board.solve()
   board.sortResults()
-  board.dispResults()
+  print board.getResults()
