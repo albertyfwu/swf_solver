@@ -2,7 +2,7 @@ from board import *
 from trie import *
 
 def loadWords(filepath):
-  trie = Trie()
+  trie = Trie(isRoot=True, cacheOn=True)
   trie.importWords(filepath)
   return trie
 
@@ -49,8 +49,4 @@ if __name__ == '__main__':
 
   board = Board(trie, letter_points, letters, bonuses)
   board.solve()
-  results = board.getResults()
-
-  max_points = sum([points for (word, points) in results])
-
-  print results, "%d words" % len(results), "%d max points" % max_points
+  board.printSummary()

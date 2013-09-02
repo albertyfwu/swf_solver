@@ -54,6 +54,11 @@ class Board:
     """Returns a list of (word, points) results."""
     return self.results
 
+  def printSummary(self):
+    """Prints a summary of results, number of words, max number of points."""
+    max_points = sum([points for (word, points) in self.results])
+    print self.results, "%d words" % len(self.results), "%d max points" % max_points
+
   def _updateResultsDict(self, resultsDict, word, points):
     """Updates word:points mapping with new points value."""
     if word not in resultsDict:
