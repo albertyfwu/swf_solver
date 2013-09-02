@@ -15,6 +15,16 @@ def loadLetterPoints(filepath):
     letter_points[letter] = points
   return letter_points
 
+def loadWordLengthPoints(filepath):
+  word_length_points = {}
+  for raw_line in open(filepath, 'r'):
+    line = raw_line.strip(' ').strip('\n')
+    raw_length, raw_points = line.split(',')
+    length = int(raw_length)
+    points = int(raw_points)
+    word_length_points[length] = points
+  return word_length_points
+
 if __name__ == '__main__':
   print '\nLoading dictionary of words...'
   trie = loadWords('./dictionary.txt')
@@ -23,6 +33,10 @@ if __name__ == '__main__':
   print '\nLoading points for letters...'
   letter_points = loadLetterPoints('./letter_points.txt')
   print 'Letter points loaded!'
+
+  print '\nLoading points for word lengths...'
+  word_length_points = loadWordLengthPoints('./word_length_points.txt')
+  print 'Word length points loaded!'
 
   while True:
     # prompt user for letters on board
@@ -48,6 +62,6 @@ if __name__ == '__main__':
     #            ['3L','','',''],
     #            ['','','','']]
 
-    board = Board(trie, letter_points, letters, bonuses)
+    board = Board(trie, letter_points, word_length_points, letters, bonuses)
     board.solve()
     board.printSummary()

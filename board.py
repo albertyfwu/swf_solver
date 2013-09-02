@@ -1,11 +1,12 @@
 class Board:
-  def __init__(self, trie, letter_points, letters, bonuses):
+  def __init__(self, trie, letter_points, word_length_points, letters, bonuses):
     """Initializes a SWF board instance containing a trie of dictionary words,
     a dictionary containing default letter tile scores, an array of array
     of letter tiles on the board, and an array of array of bonus tiles.
     Bonuses can take on the values '2L', '2W', '3L', '3W'."""
     self.trie = trie
     self.letter_points = letter_points
+    self.word_length_points = word_length_points
     self.letters = self._adjustLetters(letters)
     self.rows = len(self.letters)
     self.cols = len(self.letters[0])
@@ -39,7 +40,8 @@ class Board:
       curr_i, curr_j, curr_s, curr_p, curr_c, curr_w = stack.pop()
 
       if self.trie.containsWord(curr_s):
-        self._updateResultsDict(resultsDict, curr_s, curr_p * curr_w)
+        total_points = curr_p * curr_w + self.word_length_points[len(curr_s)]
+        self._updateResultsDict(resultsDict, curr_s, total_points)
 
       for ii in range(curr_i - 1, curr_i + 2):
         for jj in range(curr_j - 1, curr_j + 2):
@@ -58,7 +60,7 @@ class Board:
 
     # store results as a list of tuples
     self.results = sorted(resultsDict.items(), key=lambda (word, score) : score, reverse=True)
-    print 'done!'
+    print 'Done!'
 
   def getResults(self):
     """Returns a list of (word, points) results."""
