@@ -24,30 +24,33 @@ if __name__ == '__main__':
   letter_points = loadLetterPoints('./letter_points.txt')
   print 'Letter points loaded!\n'
 
-  # prompt user for letters on board
-  raw = raw_input("Please enter the SWF board as follows: " \
-    + "xxxx;xxxx;xxxx;xxxx\n")
-  lines = raw.strip(' ').split(';')
-  letters = [[letter.upper() for letter in line] for line in lines]
+  # # prompt user for letters on board
+  # raw = raw_input("Please enter the SWF board as follows: " \
+  #   + "xxxx;xxxx;xxxx;xxxx\n")
+  # lines = raw.strip(' ').split(';')
+  # letters = [[letter.upper() for letter in line] for line in lines]
 
-  # prompt user for bonuses on board
-  raw = raw_input("Please enter word/letter bonuses as follows: " \
-    + "x,x,x,x;x,x,x,x;x,x,x,x;x,x,x,x. Accepted values for x are: " \
-    + "'2L', '3L', '2W', '3W', ''.")
-  lines = raw.strip(' ').split(';')
-  bonuses = [[bonus for bonus in line.split(',')] for line in lines]
+  # # prompt user for bonuses on board
+  # raw = raw_input("Please enter word/letter bonuses as follows: " \
+  #   + "x,x,x,x;x,x,x,x;x,x,x,x;x,x,x,x. Accepted values for x are: " \
+  #   + "'2L', '3L', '2W', '3W', ''.")
+  # lines = raw.strip(' ').split(';')
+  # bonuses = [[bonus for bonus in line.split(',')] for line in lines]
 
-  letters = [['C', 'O', 'Q', 'Z'],
-             ['N', 'S', 'I', 'D'],
-             ['T', 'A', 'O', 'N'],
-             ['G', 'N', 'I', 'T']]
+  letters = [['T','H','G','E'],
+             ['R','H','N','S'],
+             ['S','I','A','E'],
+             ['P','L','X','R']]
 
-  bonuses = [['3W', '', '', ''],
-             ['', '2L', '', ''],
-             ['', '', '', ''],
-             ['', '', '', '']]
+  bonuses = [['','3W','','3L'],
+             ['3L','','',''],
+             ['3L','','',''],
+             ['','','','']]
 
   board = Board(trie, letter_points, letters, bonuses)
   board.solve()
   results = board.getResults()
-  print results, "%d words" % len(results)
+
+  max_points = sum([points for (word, points) in results])
+
+  print results, "%d words" % len(results), "%d max points" % max_points
