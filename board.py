@@ -46,7 +46,7 @@ class Board:
         if len(curr_s) > 2:
           total_points = curr_p * curr_w + self.word_length_points[len(curr_s)]
         else:
-          total_points = 1
+          total_points = curr_w
         self._updateResultsDict(resultsDict, curr_s, total_points)
 
       for ii in range(curr_i - 1, curr_i + 2):
