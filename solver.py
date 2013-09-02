@@ -61,15 +61,19 @@ if __name__ == '__main__':
     lines = raw.strip(' ').split(';')
     bonuses = [[bonus.strip(' ').upper() for bonus in line.split(',')] for line in lines]
 
-    # letters = [['T','H','G','E'],
-    #            ['R','H','N','S'],
-    #            ['S','I','A','E'],
-    #            ['P','L','X','R']]
+    # letters = [
+    #   ['T','H','G','E'],
+    #   ['R','H','N','S'],
+    #   ['S','I','A','E'],
+    #   ['P','L','X','R']
+    # ]
 
-    # bonuses = [['','3W','','3L'],
-    #            ['3L','','',''],
-    #            ['3L','','',''],
-    #            ['','','','']]
+    # bonuses = [
+    #   ['','3W','','3L'],
+    #   ['3L','','',''],
+    #   ['3L','','',''],
+    #   ['','','','']
+    # ]
 
     board = Board(trie, letter_points, word_length_points, letters, bonuses)
     board.solve()
