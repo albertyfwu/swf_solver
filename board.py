@@ -7,6 +7,9 @@ class Board:
     self.trie = trie
     self.letter_points = letter_points
     self.letters = self._adjustLetters(letters)
+    self.rows = len(self.letters)
+    self.cols = len(self.letters[0])
+    self.num_tiles = self.rows * self.cols
     self.letter_bonuses = None
     self.word_bonuses = None
     self._construct_bonuses(bonuses)
@@ -16,21 +19,21 @@ class Board:
     """Starting at each of the 16 tiles on the board, execute a DFS,
     checking for existence of the prefix in `self.trie`. If the word can be
     found, add it to an ongoing set of found words along with its score."""
-    print '\nSolving',
+    print '\nSolving...'
     resultsDict = {}
     progress = 0 # for progress bar
    
     # initialize stack
     stack = []
-    for i in xrange(4):
-      for j in xrange(4):
+    for i in xrange(self.rows):
+      for j in xrange(self.cols):
         letter = self.letters[i][j]
         stack.append((i, j, letter, self.letter_points[letter], [(i, j)], 1))
 
     while len(stack) != 0:
-      if len(stack) == 16 - progress: # for progress bar
-        print '.',
+      if len(stack) == self.num_tiles - progress: # for progress bar
         progress += 1
+        print 'Solving...%d/%d completed' % (progress, self.num_tiles)
 
       # current i, j, prefix, points, chain, word bonus
       curr_i, curr_j, curr_s, curr_p, curr_c, curr_w = stack.pop()
@@ -40,7 +43,8 @@ class Board:
 
       for ii in range(curr_i - 1, curr_i + 2):
         for jj in range(curr_j - 1, curr_j + 2):
-          if (ii, jj) != (curr_i, curr_j) and ii >= 0 and ii < 4 and jj >= 0 and jj < 4 \
+          if (ii, jj) != (curr_i, curr_j) \
+          and ii >= 0 and ii < self.rows and jj >= 0 and jj < self.cols \
           and (ii, jj) not in curr_c:
             new_letter = self.letters[ii][jj]
 
@@ -89,11 +93,11 @@ class Board:
     self.letter_bonuses = []
     self.word_bonuses = []
 
-    for i in xrange(4):
+    for i in xrange(self.rows):
       letter_bonus_row = []
       word_bonus_row = []
 
-      for j in xrange(4):
+      for j in xrange(self.cols):
         word_bonus = 1
         letter_bonus = 1
         bonus_tile = bonuses[i][j]
