@@ -16,7 +16,7 @@ class Board:
     """Starting at each of the 16 tiles on the board, execute a DFS,
     checking for existence of the prefix in `self.trie`. If the word can be
     found, add it to an ongoing set of found words along with its score."""
-    print 'Solving...'
+    print '\nSolving...',
     resultsDict = {}
    
     # initialize stack
@@ -27,7 +27,7 @@ class Board:
         stack.append((i, j, letter, self.letter_points[letter], [(i, j)], 1))
 
     while len(stack) != 0:
-      # current i, j, prefix, points, chain, word bonusf
+      # current i, j, prefix, points, chain, word bonus
       curr_i, curr_j, curr_s, curr_p, curr_c, curr_w = stack.pop()
 
       if self.trie.containsWord(curr_s):
@@ -49,6 +49,7 @@ class Board:
 
     # store results as a list of tuples
     self.results = sorted(resultsDict.items(), key=lambda (word, score) : score, reverse=True)
+    print 'done!'
 
   def getResults(self):
     """Returns a list of (word, points) results."""
@@ -57,7 +58,10 @@ class Board:
   def printSummary(self):
     """Prints a summary of results, number of words, max number of points."""
     max_points = sum([points for (word, points) in self.results])
-    print self.results, "%d words" % len(self.results), "%d max points" % max_points
+    print 'Possible words and scores:'
+    print self.results
+    print '%d words' % len(self.results)
+    print '%d max points' % max_points
 
   def _updateResultsDict(self, resultsDict, word, points):
     """Updates word:points mapping with new points value."""
