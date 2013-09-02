@@ -36,21 +36,20 @@ class Board:
   def _solveOneTile(self, i, j, resultsDict):
     """Starting at the given tile, execute a DFS to find words. The elements
     in the DFS stack are tuples of the following form:
-    (i, j, word/prefix, current word/prefix score)"""
+    (i, j, word/prefix, current word/prefix score, tile chain)"""
     letter = self.letters[i][j]
-    stack = [(i, j, letter, self.letter_points[letter])] # initialize with the first tile
-
-    # TODO: make sure we don't repeat words
+    stack = [(i, j, letter, self.letter_points[letter], [])] # initialize with the first tile
 
     while len(stack) != 0:
-      curr_i, curr_j, curr_s, curr_p = stack.pop() # current i, j, prefix, points
+      curr_i, curr_j, curr_s, curr_p, curr_c = stack.pop() # current i, j, prefix, points, chain
 
       if self.trie.containsWord(curr_s):
         self._updateResultsDict(resultsDict, curr_s, curr_p)
 
       for ii in range(curr_i - 1, curr_i + 2):
         for jj in range(curr_j - 1, curr_j + 2):
-          if (ii, jj) != (curr_i, curr_j) and ii >= 0 and ii < 4 and jj >= 0 and jj < 4:
+          if (ii, jj) != (curr_i, curr_j) and ii >= 0 and ii < 4 and jj >= 0 and jj < 4 \
+          and (ii, jj) not in curr_c:
             new_letter = self.letters[ii][jj]
             new_s = curr_s + new_letter
 
@@ -63,7 +62,7 @@ class Board:
             new_p = curr_p + points_delta
 
             if self.trie.containsPrefix(new_s):
-              stack.append((ii, jj, new_s, new_p))
+              stack.append((ii, jj, new_s, new_p, curr_c + [(ii, jj)]))
 
   def _updateResultsDict(self, resultsDict, word, points):
     if word not in resultsDict:
