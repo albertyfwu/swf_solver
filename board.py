@@ -51,9 +51,11 @@ class Board:
     self.results = sorted(resultsDict.items(), key=lambda (word, score) : score, reverse=True)
 
   def getResults(self):
+    """Returns a list of (word, points) results."""
     return self.results
 
   def _updateResultsDict(self, resultsDict, word, points):
+    """Updates word:points mapping with new points value."""
     if word not in resultsDict:
       resultsDict[word] = points
     elif points > resultsDict[word]:
