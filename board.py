@@ -1,11 +1,13 @@
 class Board:
-  def __init__(self, trie, letter_points, letters):
+  def __init__(self, trie, letter_points, letters, bonuses):
     """Initializes a SWF board instance containing a trie of dictionary words,
-    a dictionary containing default letter tile scores, and an array of array
-    of letter tiles on the board."""
+    a dictionary containing default letter tile scores, an array of array
+    of letter tiles on the board, and an array of array of bonus tiles.
+    Bonuses can take on the values '2L', '2W', '3L', '3W'."""
     self.trie = trie
     self.letter_points = letter_points
     self.letters = self._adjustLetters(letters)
+    self.bonuses = bonuses
     self.results = None
 
   def _adjustLetters(self, letters):
@@ -38,7 +40,7 @@ class Board:
     letter = self.letters[i][j]
     stack = [(i, j, letter, self.letter_points[letter])] # initialize with the first tile
 
-    # make sure we don't repeat words
+    # TODO: make sure we don't repeat words
 
     while len(stack) != 0:
       curr_i, curr_j, curr_s, curr_p = stack.pop() # current i, j, prefix, points
@@ -51,7 +53,15 @@ class Board:
           if (ii, jj) != (curr_i, curr_j) and ii >= 0 and ii < 4 and jj >= 0 and jj < 4:
             new_letter = self.letters[ii][jj]
             new_s = curr_s + new_letter
-            new_p = curr_p + self.letter_points[new_letter]
+
+            points_delta = self.letter_points[new_letter]
+            bonus_tile = self.bonuses[ii][jj]
+            if bonus_tile == '2L':
+              points_delta *= 2
+            elif bonus_tile == '3L':
+              points_delta *= 3
+            new_p = curr_p + points_delta
+
             if self.trie.containsPrefix(new_s):
               stack.append((ii, jj, new_s, new_p))
 
