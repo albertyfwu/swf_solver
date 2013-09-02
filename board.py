@@ -38,7 +38,7 @@ class Board:
     in the DFS stack are tuples of the following form:
     (i, j, word/prefix, current word/prefix score, tile chain)"""
     letter = self.letters[i][j]
-    stack = [(i, j, letter, self.letter_points[letter], [])] # initialize with the first tile
+    stack = [(i, j, letter, self.letter_points[letter], [(i, j)])] # initialize with the first tile
 
     while len(stack) != 0:
       curr_i, curr_j, curr_s, curr_p, curr_c = stack.pop() # current i, j, prefix, points, chain
