@@ -4,6 +4,8 @@ class Trie:
     self.isWord = False
 
   def importWords(self, filepath):
+    """Given a filepath to a file of words separated by newlines,
+    adds all the words to the trie.""" 
     for raw_word in open(filepath, 'r'):
       word = raw_word.strip(' ').strip('\n').upper()
       self.add(word)
